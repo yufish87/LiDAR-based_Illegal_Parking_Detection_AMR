@@ -1,0 +1,21 @@
+pointcloud_to_laserscan_node:
+  ros__parameters:
+    target_frame: "os_lidar"  # 光達的坐標系名稱，Ouster 通常是 os_sensor 或是 os_lidar
+    transform_tolerance: 0.01
+    
+    # 🌟 最重要的空間裁切參數 (單位：公尺)
+    min_height: 0.2    # 砍掉低於光達 0.2 公尺以下的點 (避免掃到地面)
+    max_height: 1.5    # 砍掉高於光達 1.5 公尺以上的點 (避免掃到天花板)
+    
+    # 掃描角度範圍 (單位：弧度, 3.14 大約是 180 度)
+    angle_min: -3.1415926  # 左側 180 度
+    angle_max: 3.1415926   # 右側 180 度
+    angle_increment: 0.0087 # 射線的密集度 (大約 0.5 度一條線)
+    scan_time: 0.1         # 光達旋轉一圈的時間 (Ouster 通常是 10Hz = 0.1秒)
+    
+    # 距離過濾 (單位：公尺)
+    range_min: 0.05    # 忽略太近的雜訊 (Ouster 表面玻璃的反射)
+    range_max: 3.0    # 太遠的障礙物先不管
+    
+    use_inf: true
+    inf_epsilon: 1.0

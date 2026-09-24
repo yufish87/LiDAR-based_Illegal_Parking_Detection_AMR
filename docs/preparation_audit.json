@@ -1,0 +1,133 @@
+{
+  "date": "2026-09-24",
+  "update": "Full GitHub-folder copy, source, asset, selected-required-file and documentation-link review. Existing gaps retained and linked prominently from README. No runtime source changes.",
+  "copied_files": 2694,
+  "copy_statuses": {
+    "exact_copy": 2690,
+    "public_copy_endpoint_externalized": 1,
+    "public_copy_updated_from_user_hardware_confirmation": 3
+  },
+  "source_or_copy_problems": [],
+  "original_source_changes_since_copy": [],
+  "duplicate_copy_destinations": [],
+  "user_attachment_verification": "original_and_copy_match",
+  "assets_checked": 32,
+  "asset_checksum_problems": [],
+  "required_files_checked": 66,
+  "required_file_groups": {
+    "control": [
+      "ros2_ws/odem_bridge.py",
+      "ros2_ws/myagv.sh",
+      "ros2_ws/myagv.urdf",
+      "ros2_ws/lidar.sh",
+      "ous/lidar.sh",
+      "ros2_ws/local.sh",
+      "ros2_ws/nav1.sh",
+      "ros2_ws/map.sh",
+      "ros2_ws/my_nav2_params.yaml",
+      "ros2_ws/fix.sh",
+      "ros2_ws/laser.sh",
+      "ros2_ws/nav_gui.py",
+      "fish/ros2_ws/run.md"
+    ],
+    "firmware": [
+      "firmware/README.md",
+      "firmware/mega2560/final_copy_20260923083515/final_copy_20260923083515.ino"
+    ],
+    "maps_model_weights": [
+      "ros2_ws/mymap.yaml",
+      "ros2_ws/mymap.pgm",
+      "ros2_ws/my_map.yaml",
+      "ros2_ws/my_map.pgm",
+      "ros2_ws/cloudGlobal.pcd",
+      "ros2_ws/final_map_V1_9_8_F_FLATTENED.pcd",
+      "agv.stl",
+      "fish/ros2_ws/weights/pointpillar_nuscenes_50e.pth",
+      "fish/ros2_ws/OpenPCDet/tools/cfgs/nuscenes_models/cbgs_pp_multihead.yaml",
+      "fish/ros2_ws/violation_area/zones.yaml"
+    ],
+    "perception": [
+      "fish/ros2_ws/src/pub_model_vehicle_detector/pub_model_vehicle_detector/detector_node.py",
+      "fish/ros2_ws/src/pub_model_vehicle_detector/package.xml",
+      "fish/ros2_ws/src/violation_detector/package.xml",
+      "fish/ros2_ws/camera_uploader_node.py",
+      "config/vehicle_detector.yaml"
+    ],
+    "localization_driver": [
+      "ros2_ws/src/lidar_localization_ros2/package.xml",
+      "ros2_ws/src/ndt_omp_ros2/package.xml",
+      "ros2_ws/src/ouster-ros/ouster-ros/package.xml",
+      "ous/src/ouster-ros/ouster-ros/package.xml",
+      "reference/deployed_localization/param/nav2_ndt_urban.yaml",
+      "reference/deployed_localization/launch/nav2_lidar_localization.launch.py"
+    ],
+    "project_files": [
+      "README.md",
+      "docs/INSTALL.md",
+      "docs/CONFIGURATION.md",
+      "docs/VALIDATION.md",
+      "docs/AMR架構與資料流.md",
+      "docs/控制系統報告.md",
+      "docs/檔案缺漏與待確認事項.md",
+      "docs/開源專案完整性清單.md",
+      "docs/AMR里程計_IMU與控制架構答覆.md",
+      "docs/室外導航無法移動_調查報告.md",
+      "docs/硬體與韌體.md",
+      "docs/歷史實車測試紀錄.md",
+      "docs/images/chassis_bottom_dimensions.png",
+      "docs/ASSETS.md",
+      "output/pdf/114-2專題報告_控制章節更新版.pdf",
+      "專題技術報告.md",
+      "LICENSE_STATUS.md",
+      "THIRD_PARTY_NOTICES.md",
+      "CONTRIBUTING.md",
+      ".gitignore",
+      ".gitattributes",
+      ".env.example",
+      ".github/workflows/static-check.yml",
+      ".github/ISSUE_TEMPLATE/bug_report.md",
+      ".github/pull_request_template.md",
+      "requirements/base.txt",
+      "requirements/gui.txt",
+      "requirements/perception.txt",
+      "tools/check_project.py",
+      "tools/collect_environment.sh"
+    ]
+  },
+  "missing_required_files": [],
+  "documentation_files_checked": 25,
+  "local_doc_links_checked": 177,
+  "local_doc_link_problems": [],
+  "documentation_link_scope": "Root Markdown, docs Markdown, reference READMEs, firmware README, GitHub templates. Local target existence; not remote links or vendor documentation.",
+  "unwanted_git_or_build_files": [],
+  "files_over_100MiB": [
+    {
+      "path": "ros2_ws/cloudGlobal.pcd",
+      "bytes": 135616810,
+      "lfs_pattern": "*.pcd"
+    }
+  ],
+  "static_audit_counts": {
+    "python": 612,
+    "package_xml": 10,
+    "urdf": 1,
+    "entry_points": 8,
+    "cmake_installed_programs": 91,
+    "cuda_sources": 34,
+    "assets": 32
+  },
+  "static_audit_errors": 5,
+  "static_audit_passed": false,
+  "copy_and_document_presence_checks_passed": true,
+  "complete_runtime_reproducibility_verified": false,
+  "arduino_compile_or_upload_performed": false,
+  "ros_build_or_hardware_test_performed": false,
+  "runtime_sources_modified_this_update": false,
+  "remote_upload_performed": false,
+  "scope": "File presence, source/copy hashes, asset hashes, local documentation links and existing static audit. Existing absent deployment files and unresolved interfaces remain in the gaps document; successful copying does not certify complete source or working deployment.",
+  "known_gaps_document": "docs/檔案缺漏與待確認事項.md",
+  "navigation_investigation": "docs/navigation_investigation.json",
+  "startup_record_verified": "fish/ros2_ws/run.md",
+  "total_files_excluding_this_audit": 2734,
+  "total_bytes_excluding_this_audit": 345694521
+}

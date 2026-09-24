@@ -1,0 +1,48 @@
+# 1. 這是地圖的基本參數 (請根據你的 map.yaml 修改)
+map_info:
+  resolution: 0.12
+  origin: [-339, -141, 0]  # 請改成你的 yaml 裡的值
+  image_height: 5642            # 請改成你的 PGM 圖片真實像素高度
+
+# 2. 這是你設定的結界頂點 (GIMP 裡面的像素座標)
+zones:
+  KL Rd., 155 Ln.:
+    - [1949, 4590] #left up
+    - [3738, 4418] #rightup
+    - [3738, 4431] #rightdown
+    - [1949, 4603] #left down
+  KL Rd, 41Ln:
+    - [1336, 3566] #LU
+    - [1336, 3579] #LD
+    - [1506, 3564] #RD
+    - [1506, 3551] #RU
+  KL Rd, 41Ln, 68Al:
+    - [1062, 1488] #LU
+    - [1075, 1488] #RU
+    - [1336, 3566] #RD
+    - [1323, 3566] #LD
+  41Ln 68Al, 73Ln section:
+    - [1037, 1323] #LU
+    - [1050, 1323] #RU
+    - [1061, 1363] #RD
+    - [1048, 1363] #LD
+  KL Rd, 73Ln:
+    - [1050, 1310] #left up
+    - [2777, 1103] #rightup
+    - [2777, 1115] #rightdown
+    - [1050, 1323] #left down
+  KL Rd, 73Ln section:
+    - [2902, 1082] #leftup
+    - [2975, 1077] #rightup
+    - [2975, 1090] #rightdown
+    - [2902, 1095] #leftdown
+  KL Rd(ntust):
+    - [2975, 1090] #leftup
+    - [2988, 1090] #rightup
+    - [3158, 1828] #rightdown
+    - [3145, 1828] #leftdown
+  KL Rd(hospital):  
+    - [3172, 1953] #leftup
+    - [3185, 1953] #rightup
+    - [3693, 4038] #rightdown
+    - [3680, 4038] #leftdown

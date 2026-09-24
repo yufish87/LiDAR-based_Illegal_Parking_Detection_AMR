@@ -1,0 +1,26 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 18c6e4c..29f98fd 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -20,7 +20,7 @@ find_package(ament_cmake REQUIRED)
+ find_package(rclcpp REQUIRED)
+ find_package(std_msgs REQUIRED)
+ 
+-find_package(PCL 1.12 REQUIRED)
++find_package(PCL 1.10 REQUIRED)
+ include_directories(${PCL_INCLUDE_DIRS})
+ link_directories(${PCL_LIBRARY_DIRS})
+ add_definitions(${PCL_DEFINITIONS})
+diff --git a/include/pclomp/gicp_omp_impl.hpp b/include/pclomp/gicp_omp_impl.hpp
+index 25f647e..883059e 100644
+--- a/include/pclomp/gicp_omp_impl.hpp
++++ b/include/pclomp/gicp_omp_impl.hpp
+@@ -226,7 +226,7 @@ pclomp::GeneralizedIterativeClosestPoint<PointSource, PointTarget>::estimateRigi
+     {
+       break;
+     }
+-    result = bfgs.testGradient();
++    result = bfgs.testGradient(1e-5);
+   } while(result == BFGSSpace::Running && inner_iterations_ < max_inner_iterations_);
+   if(result == BFGSSpace::NoProgress || result == BFGSSpace::Success || inner_iterations_ == max_inner_iterations_)
+   {

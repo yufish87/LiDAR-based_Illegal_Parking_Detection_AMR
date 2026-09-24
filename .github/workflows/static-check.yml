@@ -1,0 +1,18 @@
+name: Static source audit
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
+          submodules: false
+          persist-credentials: false
+      - name: Parse source and check declared files
+        run: python3 tools/check_project.py
+# Manual until the documented inherited source errors are resolved.
+# This checks source syntax/references only; it does not validate ROS or hardware.

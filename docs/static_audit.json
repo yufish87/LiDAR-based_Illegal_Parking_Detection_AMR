@@ -1,0 +1,40 @@
+{
+  "scope": "Static syntax and declared-file existence only. Not a ROS build or hardware test.",
+  "counts": {
+    "python": 612,
+    "package_xml": 10,
+    "urdf": 1,
+    "entry_points": 8,
+    "cmake_installed_programs": 91,
+    "cuda_sources": 34,
+    "assets": 32
+  },
+  "errors": [
+    {
+      "path": "fish/ros2_ws/OpenPCDet/pcdet/datasets/kitti/kitti_object_eval_python/evaluate.py",
+      "line": 5,
+      "detail": "invalid syntax"
+    },
+    {
+      "path": "fish/ros2_ws/src/pub_model_vehicle_detector/launch/pub_model_detector.launch.py",
+      "line": 72,
+      "detail": "closing parenthesis '}' does not match opening parenthesis '[' on line 17"
+    },
+    {
+      "path": "fish/ros2_ws/src/pub_model_vehicle_detector/setup.py",
+      "line": null,
+      "detail": "Missing console-script module: pub_model_vehicle_detector.map_server_node"
+    },
+    {
+      "path": "fish/ros2_ws/src/pub_model_vehicle_detector/setup.py",
+      "line": null,
+      "detail": "Missing console-script module: pub_model_vehicle_detector.localizer_node"
+    },
+    {
+      "path": "ros2_ws/src/ouster-ros/ouster-ros/ouster-sdk/python/setup.py",
+      "line": null,
+      "detail": "Missing console-script module: ouster.sdk.simple_viz"
+    }
+  ],
+  "passed": false
+}

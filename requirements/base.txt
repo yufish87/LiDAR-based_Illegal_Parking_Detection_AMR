@@ -1,0 +1,7 @@
+# Dependency inventory, not a tested version lock.
+# ROS modules (rclpy, TF2, message types) must come from the matching ROS distro.
+# On Jetson, prefer existing/apt NumPy and OpenCV to avoid replacing platform builds.
+numpy
+pyserial
+requests
+PyYAML

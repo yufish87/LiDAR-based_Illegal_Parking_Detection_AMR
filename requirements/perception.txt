@@ -1,0 +1,13 @@
+# Unpinned inventory derived from local OpenPCDet setup.py/requirements.txt.
+# Install compatible NVIDIA torch, torchvision, spconv and OpenCV separately.
+# Do not treat this list as a tested JetPack compatibility matrix.
+numpy
+llvmlite
+numba
+tensorboardX
+easydict
+PyYAML
+scikit-image
+tqdm
+SharedArray
+pyquaternion

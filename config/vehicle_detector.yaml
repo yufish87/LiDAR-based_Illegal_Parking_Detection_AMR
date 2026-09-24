@@ -1,0 +1,16 @@
+# User-provided deployment settings, recorded 2026-09-23.
+# Load explicitly with --ros-args --params-file; this file does not change defaults.
+/pub_model_vehicle_detector:
+  ros__parameters:
+    score_threshold: 0.4
+    score_threshold_car: 0.4
+    score_threshold_truck: 0.4
+    score_threshold_bus: 0.4
+    roi_x_min: -10.0
+    roi_x_max: 15.0
+    roi_y_min: -12.0
+    roi_y_max: 12.0
+    roi_z_min: -2.5
+    roi_z_max: 3.0
+    z_offset_correction: 0.57
+    sync_time_stamp: true

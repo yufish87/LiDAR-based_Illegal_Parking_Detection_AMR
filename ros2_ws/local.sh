@@ -1,0 +1,2 @@
+source install/setup.bash
+ros2 launch lidar_localization_ros2 nav2_lidar_localization.launch.py timestamp_mode:=TIME_FROM_ROS_TIME

@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<robot name="agv">
+
+  <material name="blue"> <color rgba="0 0 0.8 1"/> </material>
+  <material name="black"> <color rgba="0 0 0 1"/> </material>
+
+  <link name="base_link">
+    <visual>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="file:///home/ntust/agv.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="blue">
+        <color rgba="0 0 0.8 1"/>
+      </material>
+    </visual>
+  </link>
+  <link name="os_lidar"/>
+
+  <joint name="lidar_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="os_lidar"/>
+    <origin xyz="-0.375 0 1.122" rpy="0 0 0"/>
+  </joint>
+
+  <link name="left_wheel">
+    <visual>
+      <geometry> <cylinder length="0.05" radius="0.075"/> </geometry>
+      <material name="black"/>
+    </visual>
+  </link>
+  <joint name="left_wheel_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="left_wheel"/>
+    <origin xyz="-0.005 0.41 0.125" rpy="1.57 0 0"/>
+  </joint>
+
+  <link name="right_wheel">
+    <visual>
+      <geometry> <cylinder length="0.05" radius="0.075"/> </geometry>
+      <material name="black"/>
+    </visual>
+  </link>
+  <joint name="right_wheel_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="right_wheel"/>
+    <origin xyz="-0.005 -0.41 0.125" rpy="1.57 0 0"/>
+  </joint>
+
+</robot>

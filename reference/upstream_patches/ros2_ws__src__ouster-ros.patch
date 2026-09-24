@@ -1,0 +1,24 @@
+diff --git a/ouster-ros/launch/record.launch.xml b/ouster-ros/launch/record.launch.xml
+deleted file mode 120000
+index 7454aa4..0000000
+--- a/ouster-ros/launch/record.launch.xml
++++ /dev/null
+@@ -1 +0,0 @@
+-record.composite.launch.xml
+\ No newline at end of file
+diff --git a/ouster-ros/launch/replay.launch.xml b/ouster-ros/launch/replay.launch.xml
+deleted file mode 120000
+index bb2a354..0000000
+--- a/ouster-ros/launch/replay.launch.xml
++++ /dev/null
+@@ -1 +0,0 @@
+-replay.composite.launch.xml
+\ No newline at end of file
+diff --git a/ouster-ros/launch/sensor.launch.xml b/ouster-ros/launch/sensor.launch.xml
+deleted file mode 120000
+index 5ff3040..0000000
+--- a/ouster-ros/launch/sensor.launch.xml
++++ /dev/null
+@@ -1 +0,0 @@
+-sensor.composite.launch.xml
+\ No newline at end of file

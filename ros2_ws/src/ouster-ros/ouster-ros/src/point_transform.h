@@ -1,0 +1,203 @@
+/**
+ * Copyright (c) 2018-2023, Ouster, Inc.
+ * All rights reserved.
+ *
+ * @file point_transform.h
+ * @brief Implements the main transform_point method used to convert point from
+ * a source pcl point format usually sensor native point representation to other
+ * pcl point formats such as Velodyne XYZIR or pcl::XYZ, pcl::XYZI, ... 
+ */
+
+#pragma once
+
+#include "point_meta_helpers.h"
+
+namespace ouster_ros {
+namespace point {
+
+DEFINE_MEMBER_CHECKER(x);
+DEFINE_MEMBER_CHECKER(y);
+DEFINE_MEMBER_CHECKER(z);
+DEFINE_MEMBER_CHECKER(t);
+DEFINE_MEMBER_CHECKER(ring);
+DEFINE_MEMBER_CHECKER(intensity);
+DEFINE_MEMBER_CHECKER(ambient);
+DEFINE_MEMBER_CHECKER(range);
+DEFINE_MEMBER_CHECKER(signal);
+DEFINE_MEMBER_CHECKER(reflectivity);
+DEFINE_MEMBER_CHECKER(near_ir);
+DEFINE_MEMBER_CHECKER(flags);
+DEFINE_MEMBER_CHECKER(window);
+DEFINE_MEMBER_CHECKER(zone_mask);
+DEFINE_MEMBER_CHECKER(r);
+DEFINE_MEMBER_CHECKER(g);
+DEFINE_MEMBER_CHECKER(b);
+DEFINE_MEMBER_CHECKER(a);
+
+// Compile-time predicate identifying point types that expose a complete
+// (r, g, b) color triplet directly accessible by name. Used for direct
+// per-channel mapping during point transforms and as the gating condition
+// for RGB ingestion in scan_to_cloud_f.
+template <typename T>
+inline constexpr bool has_rgb_v = has_r_v<T> && has_g_v<T> && has_b_v<T>;
+
+template <typename PointTGT, typename PointSRC>
+void transform(PointTGT& tgt_pt, const PointSRC& src_pt) {
+    // NOTE: for now we assume all points have xyz component
+    tgt_pt.x = src_pt.x; tgt_pt.y = src_pt.y; tgt_pt.z = src_pt.z;
+
+    // t: timestamp
+    CondBinaryOp<has_t_v<PointTGT> && has_t_v<PointSRC>>::run(
+        tgt_pt, src_pt, [](auto& tgt_pt, const auto& src_pt) { tgt_pt.t = src_pt.t; }
+    );
+
+    CondBinaryOp<has_t_v<PointTGT> && !has_t_v<PointSRC>>::run(
+        tgt_pt, src_pt, [](auto& tgt_pt, const auto&) { tgt_pt.t = 0U; }
+    );
+
+    // ring
+    CondBinaryOp<has_ring_v<PointTGT> && has_ring_v<PointSRC>>::run(
+        tgt_pt, src_pt, [](auto& tgt_pt, const auto& src_pt) { tgt_pt.ring = src_pt.ring; }
+    );
+
+    CondBinaryOp<has_ring_v<PointTGT> && !has_ring_v<PointSRC>>::run(
+        tgt_pt, src_pt, [](auto& tgt_pt, const auto&) {
+            tgt_pt.ring = static_cast<decltype(tgt_pt.ring)>(0);
+        }
+    );
+
+    // range
+    CondBinaryOp<has_range_v<PointTGT> && has_range_v<PointSRC>>::run(
+        tgt_pt, src_pt, [](auto& tgt_pt, const auto& src_pt) { tgt_pt.range = src_pt.range; }
+    );
+
+    CondBinaryOp<has_range_v<PointTGT> && !has_range_v<PointSRC>>::run(
+        tgt_pt, src_pt, [](auto& tgt_pt, const auto&) { tgt_pt.range = 0U; }
+    );
+
+    // signal
+    CondBinaryOp<has_signal_v<PointTGT> && has_signal_v<PointSRC>>::run(
+        tgt_pt, src_pt, [](auto& tgt_pt, const auto& src_pt) { tgt_pt.signal = src_pt.signal; }
+    );
+
+    CondBinaryOp<has_signal_v<PointTGT> && !has_signal_v<PointSRC>>::run(
+        tgt_pt, src_pt, [](auto& tgt_pt, const auto&) {
+            tgt_pt.signal = static_cast<decltype(tgt_pt.signal)>(0);
+        }
+    );
+
+    // intensity <- signal
+    // PointTGT should not have signal and intensity at the same time [normally]
+    CondBinaryOp<has_intensity_v<PointTGT> && has_signal_v<PointSRC>>::run(
+        tgt_pt, src_pt, [](auto& tgt_pt, const auto& src_pt) {
+            tgt_pt.intensity = static_cast<decltype(tgt_pt.intensity)>(src_pt.signal);
+        }
+    );
+
+    CondBinaryOp<has_intensity_v<PointTGT> && !has_signal_v<PointSRC>>::run(
+        tgt_pt, src_pt, [](auto& tgt_pt, const auto&) {
+            tgt_pt.intensity = static_cast<decltype(tgt_pt.intensity)>(0);
+        }
+    );
+
+    // reflectivity
+    CondBinaryOp<has_reflectivity_v<PointTGT> && has_reflectivity_v<PointSRC>>::run(
+        tgt_pt, src_pt, [](auto& tgt_pt, const auto& src_pt) {
+            tgt_pt.reflectivity = src_pt.reflectivity;
+        }
+    );
+
+    CondBinaryOp<has_reflectivity_v<PointTGT> && !has_reflectivity_v<PointSRC>>::run(
+        tgt_pt, src_pt, [](auto& tgt_pt, const auto&) {
+            tgt_pt.reflectivity = static_cast<decltype(tgt_pt.reflectivity)>(0);
+        }
+    );
+
+    // near_ir
+    CondBinaryOp<has_near_ir_v<PointTGT> && has_near_ir_v<PointSRC>>::run(
+        tgt_pt, src_pt, [](auto& tgt_pt, const auto& src_pt) { tgt_pt.near_ir = src_pt.near_ir; }
+    );
+
+    CondBinaryOp<has_near_ir_v<PointTGT> && !has_near_ir_v<PointSRC>>::run(
+        tgt_pt, src_pt, [](auto& tgt_pt, const auto&) {
+            tgt_pt.near_ir = static_cast<decltype(tgt_pt.near_ir)>(0); }
+    );
+
+    // ambient <- near_ir
+    CondBinaryOp<has_ambient_v<PointTGT> && has_near_ir_v<PointSRC>>::run(tgt_pt, src_pt,
+        [](auto& tgt_pt, const auto& src_pt) {
+            tgt_pt.ambient = static_cast<decltype(tgt_pt.ambient)>(src_pt.near_ir);
+        }
+    );
+
+    CondBinaryOp<has_ambient_v<PointTGT> && !has_near_ir_v<PointSRC>>::run(tgt_pt, src_pt,
+        [](auto& tgt_pt, const auto&) {
+            tgt_pt.ambient = static_cast<decltype(tgt_pt.ambient)>(0);
+        }
+    );
+
+    // flags
+    CondBinaryOp<has_flags_v<PointTGT> && has_flags_v<PointSRC>>::run(tgt_pt, src_pt,
+        [](auto& tgt_pt, const auto& src_pt) {
+            tgt_pt.flags = src_pt.flags;
+        }
+    );
+
+    CondBinaryOp<has_flags_v<PointTGT> && !has_flags_v<PointSRC>>::run(tgt_pt, src_pt,
+        [](auto& tgt_pt, const auto&) {
+            tgt_pt.flags = static_cast<decltype(tgt_pt.flags)>(0);
+        }
+    );
+
+    // window
+    CondBinaryOp<has_window_v<PointTGT> && has_window_v<PointSRC>>::run(tgt_pt, src_pt,
+        [](auto& tgt_pt, const auto& src_pt) {
+            tgt_pt.window = src_pt.window;
+        }
+    );
+
+    CondBinaryOp<has_window_v<PointTGT> && !has_window_v<PointSRC>>::run(tgt_pt, src_pt,
+        [](auto& tgt_pt, const auto&) {
+            tgt_pt.window = static_cast<decltype(tgt_pt.window)>(0);
+        }
+    );
+
+    // zone_mask
+    CondBinaryOp<has_zone_mask_v<PointTGT> && has_zone_mask_v<PointSRC>>::run(tgt_pt, src_pt,
+        [](auto& tgt_pt, const auto& src_pt) {
+            tgt_pt.zone_mask = src_pt.zone_mask;
+        }
+    );
+
+    CondBinaryOp<has_zone_mask_v<PointTGT> && !has_zone_mask_v<PointSRC>>::run(tgt_pt, src_pt,
+        [](auto& tgt_pt, const auto&) {
+            tgt_pt.zone_mask = static_cast<decltype(tgt_pt.zone_mask)>(0);
+        }
+    );
+
+    // RGB: only copy if both source and target support direct color access
+    CondBinaryOp<has_rgb_v<PointTGT> && has_rgb_v<PointSRC>>::run(tgt_pt, src_pt,
+        [](auto& tgt_pt, const auto& src_pt) {
+            tgt_pt.r = static_cast<decltype(tgt_pt.r)>(src_pt.r);
+            tgt_pt.g = static_cast<decltype(tgt_pt.g)>(src_pt.g);
+            tgt_pt.b = static_cast<decltype(tgt_pt.b)>(src_pt.b);
+        }
+    );
+
+    CondBinaryOp<has_rgb_v<PointTGT> && !has_rgb_v<PointSRC>>::run(tgt_pt, src_pt,
+        [](auto& tgt_pt, const auto&) {
+            tgt_pt.r = static_cast<decltype(tgt_pt.r)>(0);
+            tgt_pt.g = static_cast<decltype(tgt_pt.g)>(0);
+            tgt_pt.b = static_cast<decltype(tgt_pt.b)>(0);
+        }
+    );
+
+    CondBinaryOp<has_a_v<PointTGT>>::run(tgt_pt, src_pt,
+        [](auto& tgt_pt, const auto&) {
+            tgt_pt.a = static_cast<decltype(tgt_pt.a)>(255);
+        }
+    );
+}
+
+}   // point
+}   // ouster_ros

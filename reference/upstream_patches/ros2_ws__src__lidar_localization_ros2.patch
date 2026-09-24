@@ -1,0 +1,610 @@
+diff --git a/include/lidar_localization/lidar_localization_component.hpp b/include/lidar_localization/lidar_localization_component.hpp
+index f09d8be..6e93b16 100644
+--- a/include/lidar_localization/lidar_localization_component.hpp
++++ b/include/lidar_localization/lidar_localization_component.hpp
+@@ -24,9 +24,9 @@
+ #include <tf2_ros/buffer.h>
+ #include <tf2_ros/transform_listener.h>
+ #include <tf2_ros/transform_broadcaster.h>
+-#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+-#include <tf2_sensor_msgs/tf2_sensor_msgs.hpp>
+-#include <tf2_eigen/tf2_eigen.hpp>
++#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
++#include <tf2_sensor_msgs/tf2_sensor_msgs.h>
++#include <tf2_eigen/tf2_eigen.h>
+ #include <pcl_conversions/pcl_conversions.h>
+ #include "builtin_interfaces/msg/time.hpp"
+ #include "diagnostic_msgs/msg/diagnostic_array.hpp"
+diff --git a/include/lidar_localization/map_initialization_policy.hpp b/include/lidar_localization/map_initialization_policy.hpp
+index ff9b01c..5bd36bc 100644
+--- a/include/lidar_localization/map_initialization_policy.hpp
++++ b/include/lidar_localization/map_initialization_policy.hpp
+@@ -10,7 +10,7 @@
+ #include <pcl/point_cloud.h>
+ #include <pcl/point_types.h>
+ #include <pcl_conversions/pcl_conversions.h>
+-
++#include <boost/make_shared.hpp>
+ #include "sensor_msgs/msg/point_cloud2.hpp"
+ 
+ #include "lidar_localization/registration_backend_policy.hpp"
+@@ -71,7 +71,7 @@ inline sensor_msgs::msg::PointCloud2 makeInitialMapMessage(
+   if (downsample) {
+     pcl::PCLPointCloud2 filtered_map_cloud;
+     pcl::VoxelGrid<pcl::PCLPointCloud2> voxel_filter;
+-    voxel_filter.setInputCloud(std::make_shared<pcl::PCLPointCloud2>(raw_map_cloud));
++    voxel_filter.setInputCloud(boost::make_shared<pcl::PCLPointCloud2>(raw_map_cloud));
+     voxel_filter.setLeafSize(voxel_leaf_size, voxel_leaf_size, voxel_leaf_size);
+     voxel_filter.filter(filtered_map_cloud);
+     pcl_conversions::moveFromPCL(filtered_map_cloud, map_msg);
+diff --git a/include/lidar_localization/pose_publish_policy.hpp b/include/lidar_localization/pose_publish_policy.hpp
+index 6f0ca4f..c5f87ec 100644
+--- a/include/lidar_localization/pose_publish_policy.hpp
++++ b/include/lidar_localization/pose_publish_policy.hpp
+@@ -11,7 +11,7 @@
+ #include <geometry_msgs/msg/transform_stamped.hpp>
+ #include <nav_msgs/msg/path.hpp>
+ #include <tf2/transform_datatypes.h>
+-#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
++#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+ 
+ namespace lidar_localization
+ {
+diff --git a/launch/lidar_localization.launch.py b/launch/lidar_localization.launch.py
+index 56302f6..990a595 100644
+--- a/launch/lidar_localization.launch.py
++++ b/launch/lidar_localization.launch.py
+@@ -30,13 +30,13 @@ def generate_launch_description():
+         default=default_localization_param_dir)
+     cloud_topic = LaunchConfiguration(
+         'cloud_topic',
+-        default='/velodyne_points')
++        default='/ouster/points')
+     twist_topic = LaunchConfiguration(
+         'twist_topic',
+         default='/twist')
+     imu_topic = LaunchConfiguration(
+         'imu_topic',
+-        default='/imu')
++        default='/ouster/imu')
+     global_frame_id = LaunchConfiguration('global_frame_id', default='map')
+     odom_frame_id = LaunchConfiguration('odom_frame_id', default='odom')
+     base_frame_id = LaunchConfiguration('base_frame_id', default='base_link')
+@@ -44,7 +44,7 @@ def generate_launch_description():
+     use_dataset_tf_tree = LaunchConfiguration('use_dataset_tf_tree', default='false')
+     dataset_root_frame = LaunchConfiguration('dataset_root_frame', default='camera_base')
+     publish_lidar_tf = LaunchConfiguration('publish_lidar_tf', default='true')
+-    lidar_frame_id = LaunchConfiguration('lidar_frame_id', default='velodyne')
++    lidar_frame_id = LaunchConfiguration('lidar_frame_id', default='os_sensor')
+     lidar_tf_x = LaunchConfiguration('lidar_tf_x', default='0.0')
+     lidar_tf_y = LaunchConfiguration('lidar_tf_y', default='0.0')
+     lidar_tf_z = LaunchConfiguration('lidar_tf_z', default='0.0')
+@@ -76,14 +76,14 @@ def generate_launch_description():
+         package='tf2_ros',
+         executable='static_transform_publisher',
+         arguments=[
+-            '--x', lidar_tf_x,
+-            '--y', lidar_tf_y,
+-            '--z', lidar_tf_z,
+-            '--roll', lidar_tf_roll,
+-            '--pitch', lidar_tf_pitch,
+-            '--yaw', lidar_tf_yaw,
+-            '--frame-id', base_frame_id,
+-            '--child-frame-id', lidar_frame_id,
++            lidar_tf_x,
++            lidar_tf_y,
++            lidar_tf_z,
++            lidar_tf_yaw,
++            lidar_tf_pitch,
++            lidar_tf_roll,
++            base_frame_id,
++            lidar_frame_id,
+         ],
+         condition=IfCondition(PythonExpression([
+             "'", publish_lidar_tf, "' == 'true' and '", use_dataset_tf_tree, "' != 'true'"
+@@ -94,14 +94,14 @@ def generate_launch_description():
+         package='tf2_ros',
+         executable='static_transform_publisher',
+         arguments=[
+-            '--x', imu_tf_x,
+-            '--y', imu_tf_y,
+-            '--z', imu_tf_z,
+-            '--roll', imu_tf_roll,
+-            '--pitch', imu_tf_pitch,
+-            '--yaw', imu_tf_yaw,
+-            '--frame-id', base_frame_id,
+-            '--child-frame-id', imu_frame_id,
++            imu_tf_x,
++            imu_tf_y,
++            imu_tf_z,
++            imu_tf_yaw,
++            imu_tf_pitch,
++            imu_tf_roll,
++            base_frame_id,
++            imu_frame_id,
+         ],
+         condition=IfCondition(publish_imu_tf))
+ 
+@@ -172,6 +172,7 @@ def generate_launch_description():
+                 'continuous_time_deskew_reference_time_sec': ParameterValue(
+                     continuous_time_deskew_reference_time_sec, value_type=float),
+             },
++            {'map_path': '/home/ntust/final_map_V1_9_8_F_FLATTENED.pcd'},
+         ],
+         remappings=[('/cloud', cloud_topic), ('/twist', twist_topic), ('/imu', imu_topic)],
+         output='screen')
+@@ -219,7 +220,7 @@ def generate_launch_description():
+             description='Path to the lidar_localization_ros2 parameter YAML.'),
+         DeclareLaunchArgument(
+             'cloud_topic',
+-            default_value='/velodyne_points',
++            default_value='/ouster/points',
+             description='Input sensor_msgs/PointCloud2 topic remapped to /cloud.'),
+         DeclareLaunchArgument(
+             'twist_topic',
+@@ -227,7 +228,7 @@ def generate_launch_description():
+             description='Optional twist topic remapped to /twist.'),
+         DeclareLaunchArgument(
+             'imu_topic',
+-            default_value='/imu',
++            default_value='/ouster/imu',
+             description='Optional IMU topic remapped to /imu.'),
+         DeclareLaunchArgument('global_frame_id', default_value='map'),
+         DeclareLaunchArgument('odom_frame_id', default_value='odom'),
+@@ -245,7 +246,7 @@ def generate_launch_description():
+             'publish_lidar_tf',
+             default_value='true',
+             description='Publish a static base_frame_id -> lidar_frame_id transform.'),
+-        DeclareLaunchArgument('lidar_frame_id', default_value='velodyne'),
++        DeclareLaunchArgument('lidar_frame_id', default_value='os_sensor'),
+         DeclareLaunchArgument('lidar_tf_x', default_value='0.0'),
+         DeclareLaunchArgument('lidar_tf_y', default_value='0.0'),
+         DeclareLaunchArgument('lidar_tf_z', default_value='0.0'),
+diff --git a/launch/nav2_lidar_localization.launch.py b/launch/nav2_lidar_localization.launch.py
+index 889b998..6b1b8cb 100644
+--- a/launch/nav2_lidar_localization.launch.py
++++ b/launch/nav2_lidar_localization.launch.py
+@@ -45,11 +45,11 @@ def generate_launch_description():
+     base_frame_id = LaunchConfiguration('base_frame_id', default='base_link')
+     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
+     enable_map_odom_tf = LaunchConfiguration('enable_map_odom_tf', default='true')
+-    cloud_topic = LaunchConfiguration('cloud_topic', default='/velodyne_points')
++    cloud_topic = LaunchConfiguration('cloud_topic', default='/ouster/points')
+     twist_topic = LaunchConfiguration('twist_topic', default='/twist')
+-    imu_topic = LaunchConfiguration('imu_topic', default='/imu/data')
++    imu_topic = LaunchConfiguration('imu_topic', default='/ouster/imu')
+     publish_lidar_tf = LaunchConfiguration('publish_lidar_tf', default='true')
+-    lidar_frame_id = LaunchConfiguration('lidar_frame_id', default='velodyne')
++    lidar_frame_id = LaunchConfiguration('lidar_frame_id', default='os_sensor')
+     lidar_tf_x = LaunchConfiguration('lidar_tf_x', default='0.0')
+     lidar_tf_y = LaunchConfiguration('lidar_tf_y', default='0.0')
+     lidar_tf_z = LaunchConfiguration('lidar_tf_z', default='0.0')
+@@ -79,11 +79,11 @@ def generate_launch_description():
+     ld.add_action(DeclareLaunchArgument('base_frame_id', default_value='base_link'))
+     ld.add_action(DeclareLaunchArgument('use_sim_time', default_value='false'))
+     ld.add_action(DeclareLaunchArgument('enable_map_odom_tf', default_value='true'))
+-    ld.add_action(DeclareLaunchArgument('cloud_topic', default_value='/velodyne_points'))
++    ld.add_action(DeclareLaunchArgument('cloud_topic', default_value='/ouster/points'))
+     ld.add_action(DeclareLaunchArgument('twist_topic', default_value='/twist'))
+-    ld.add_action(DeclareLaunchArgument('imu_topic', default_value='/imu/data'))
++    ld.add_action(DeclareLaunchArgument('imu_topic', default_value='/ouster/imu'))
+     ld.add_action(DeclareLaunchArgument('publish_lidar_tf', default_value='true'))
+-    ld.add_action(DeclareLaunchArgument('lidar_frame_id', default_value='velodyne'))
++    ld.add_action(DeclareLaunchArgument('lidar_frame_id', default_value='os_sensor'))
+     ld.add_action(DeclareLaunchArgument('lidar_tf_x', default_value='0.0'))
+     ld.add_action(DeclareLaunchArgument('lidar_tf_y', default_value='0.0'))
+     ld.add_action(DeclareLaunchArgument('lidar_tf_z', default_value='0.0'))
+@@ -108,9 +108,9 @@ def generate_launch_description():
+         name='lidar_tf',
+         package='tf2_ros',
+         executable='static_transform_publisher',
+-        arguments=['--x', lidar_tf_x, '--y', lidar_tf_y, '--z', lidar_tf_z,
+-                   '--roll', lidar_tf_roll, '--pitch', lidar_tf_pitch, '--yaw', lidar_tf_yaw,
+-                   '--frame-id', base_frame_id, '--child-frame-id', lidar_frame_id],
++        arguments=[ lidar_tf_x, lidar_tf_y, lidar_tf_z,
++                    lidar_tf_yaw, lidar_tf_pitch, lidar_tf_roll,
++                    base_frame_id, lidar_frame_id],
+         condition=IfCondition(publish_lidar_tf))
+ 
+     # Static TF: base_link → imu_link (adjust per robot)
+@@ -118,9 +118,9 @@ def generate_launch_description():
+         name='imu_tf',
+         package='tf2_ros',
+         executable='static_transform_publisher',
+-        arguments=['--x', imu_tf_x, '--y', imu_tf_y, '--z', imu_tf_z,
+-                   '--roll', imu_tf_roll, '--pitch', imu_tf_pitch, '--yaw', imu_tf_yaw,
+-                   '--frame-id', base_frame_id, '--child-frame-id', imu_frame_id],
++        arguments=[ imu_tf_x, imu_tf_y, imu_tf_z,
++                    imu_tf_yaw, imu_tf_pitch, imu_tf_roll,
++                    base_frame_id, imu_frame_id],
+         condition=IfCondition(publish_imu_tf))
+ 
+     # Localization lifecycle node
+@@ -144,12 +144,14 @@ def generate_launch_description():
+                             use_continuous_time_deskew, value_type=bool),
+                         'continuous_time_deskew_reference_time_sec': ParameterValue(
+                             continuous_time_deskew_reference_time_sec, value_type=float),
+-                    }],  # Nav2: publish map→odom
++                    }, {'map_path': '/home/ntust/ros2_ws/cloudGlobal.pcd'}
++                    ],  # Nav2: publish map→odom
+         remappings=[
+             ('/cloud', cloud_topic),
+             ('/twist', twist_topic),
+             ('/imu', imu_topic),
+             ('/pcl_pose', '/localization/pose_with_covariance'),
++            ('/map', '/pcd_map'),
+         ],
+         output='screen')
+ 
+diff --git a/param/localization.yaml b/param/localization.yaml
+index 0de6a3a..37a7962 100644
+--- a/param/localization.yaml
++++ b/param/localization.yaml
+@@ -15,7 +15,7 @@
+       scan_min_range: 1.0
+       scan_period: 0.1
+       use_pcd_map: true
+-      map_path: ""
++      map_path: "/home/ntust/final_map_V1_9_8_F_FLATTENED.pcd"
+       set_initial_pose: true
+       initial_pose_x: 0.0
+       initial_pose_y: 0.0
+diff --git a/param/nav2_ndt_urban.yaml b/param/nav2_ndt_urban.yaml
+index 28fdb0c..8eb913a 100644
+--- a/param/nav2_ndt_urban.yaml
++++ b/param/nav2_ndt_urban.yaml
+@@ -1,23 +1,26 @@
++# Preset: conservative urban NDT_OMP localizer for Nav2.
++# Status: recommended Nav2 localizer starting point.
++
+ /**:
+   ros__parameters:
+     registration_method: NDT_OMP 
+-    score_threshold: 6.0
+-    ndt_resolution: 1.0
++    score_threshold: 8.0
++    ndt_resolution: 3.5
+     ndt_step_size: 0.1
+-    ndt_num_threads: 4
+-    ndt_max_iterations: 35
++    ndt_num_threads: 8
++    ndt_max_iterations: 20
+     gicp_corr_randomness: 20
+     gicp_max_correspondence_distance: 2.0
+     vgicp_voxel_resolution: 1.0
+     transform_epsilon: 0.01
+-    voxel_leaf_size: 0.2
+-    enable_scan_voxel_filter: false
+-    scan_max_range: 100.0
+-    scan_min_range: 1.0
++    voxel_leaf_size: 0.3
++    enable_scan_voxel_filter: true
++    scan_max_range: 25.0
++    scan_min_range: 0.5
+     scan_period: 0.1
+     use_pcd_map: true
+-    map_path: ""
+-    set_initial_pose: false
++    map_path: "/home/ntust/ros2_ws/cloudGlobal.pcd"
++    set_initial_pose: true
+     initial_pose_x: 0.0
+     initial_pose_y: 0.0
+     initial_pose_z: 0.0
+@@ -25,12 +28,12 @@
+     initial_pose_qy: 0.0
+     initial_pose_qz: 0.0
+     initial_pose_qw: 1.0
+-    use_odom: false
++    use_odom: true
+     use_twist_prediction: true
+     twist_prediction_use_angular_velocity: false
+     max_twist_prediction_dt: 0.5
+     use_imu: false
+-    use_imu_preintegration: true
++    use_imu_preintegration: false
+     imu_preintegration_use_base_frame_transform: false
+     imu_prediction_correction_guard_translation_m: 2.0
+     imu_prediction_correction_guard_yaw_deg: 4.0
+@@ -41,18 +44,18 @@
+     reinitialization_trigger_seed_translation_scale_m: 100.0
+     reinitialization_trigger_reject_streak_scale: 200.0
+     reinitialization_trigger_fitness_explosion_threshold: 1000.0
+-    enable_debug: false
++    enable_debug: true
+     predict_pose_from_previous_delta: true
+     enable_local_map_crop: true
+-    local_map_radius: 150.0
++    local_map_radius: 30.0
+     local_map_min_points: 100
+     reject_above_score_threshold: true
+     enable_borderline_seed_rejection_gate: true
+     borderline_seed_gate_score_threshold: 5.25
+     borderline_seed_gate_min_seed_translation_m: 1.0
+-    enable_map_odom_tf: false
++    enable_map_odom_tf: true
+     global_frame_id: map
+     odom_frame_id: odom
+     base_frame_id: base_link
+-    enable_timer_publishing: false
+-    pose_publish_frequency: 30.0
++    enable_timer_publishing: true
++    pose_publish_frequency: 10.0
+diff --git a/scripts/analyze_pose_covariance_calibration.py b/scripts/analyze_pose_covariance_calibration.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/augment_pointcloud_intensity.py b/scripts/augment_pointcloud_intensity.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/benchmark_compare_runs b/scripts/benchmark_compare_runs
+old mode 100755
+new mode 100644
+diff --git a/scripts/benchmark_diagnostic_recorder b/scripts/benchmark_diagnostic_recorder
+old mode 100755
+new mode 100644
+diff --git a/scripts/benchmark_drift_correlation_report b/scripts/benchmark_drift_correlation_report
+old mode 100755
+new mode 100644
+diff --git a/scripts/benchmark_eval_evo_ape b/scripts/benchmark_eval_evo_ape
+old mode 100755
+new mode 100644
+diff --git a/scripts/benchmark_eval_trajectory b/scripts/benchmark_eval_trajectory
+old mode 100755
+new mode 100644
+diff --git a/scripts/benchmark_extract_pose_reference_from_rosbag2 b/scripts/benchmark_extract_pose_reference_from_rosbag2
+old mode 100755
+new mode 100644
+diff --git a/scripts/benchmark_from_manifest b/scripts/benchmark_from_manifest
+old mode 100755
+new mode 100644
+diff --git a/scripts/benchmark_pose_recorder b/scripts/benchmark_pose_recorder
+old mode 100755
+new mode 100644
+diff --git a/scripts/benchmark_runner b/scripts/benchmark_runner
+old mode 100755
+new mode 100644
+diff --git a/scripts/benchmark_sweep_localizer b/scripts/benchmark_sweep_localizer
+old mode 100755
+new mode 100644
+diff --git a/scripts/bootstrap_colcon_workspace.sh b/scripts/bootstrap_colcon_workspace.sh
+old mode 100755
+new mode 100644
+diff --git a/scripts/build_gt_aligned_map_from_reference_csv.py b/scripts/build_gt_aligned_map_from_reference_csv.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/build_public_demo_report.py b/scripts/build_public_demo_report.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/build_public_validation_dashboard.py b/scripts/build_public_validation_dashboard.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/build_relocalization_demo_report.py b/scripts/build_relocalization_demo_report.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/check_lidar_localization_bringup.py b/scripts/check_lidar_localization_bringup.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/check_mid360_legged_bringup.py b/scripts/check_mid360_legged_bringup.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/check_recovery_pose_gt.py b/scripts/check_recovery_pose_gt.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/compare_nav2_reinit_supervisor_runs.py b/scripts/compare_nav2_reinit_supervisor_runs.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/compare_registration_relocalization_score_summaries.py b/scripts/compare_registration_relocalization_score_summaries.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/convert_boreas_sequence_to_rosbag2.py b/scripts/convert_boreas_sequence_to_rosbag2.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/create_lidar_localization_config.py b/scripts/create_lidar_localization_config.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/diagnose_local_map_crop_coverage.py b/scripts/diagnose_local_map_crop_coverage.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/fetch_koide_hard_pointcloud_localization_dataset.sh b/scripts/fetch_koide_hard_pointcloud_localization_dataset.sh
+old mode 100755
+new mode 100644
+diff --git a/scripts/fetch_official_autoware_istanbul_dataset.sh b/scripts/fetch_official_autoware_istanbul_dataset.sh
+old mode 100755
+new mode 100644
+diff --git a/scripts/fetch_official_hdl_localization_sample.sh b/scripts/fetch_official_hdl_localization_sample.sh
+old mode 100755
+new mode 100644
+diff --git a/scripts/generate_occupancy_map_from_pcd.py b/scripts/generate_occupancy_map_from_pcd.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/global_localization_node.py b/scripts/global_localization_node.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/global_localization_query.py b/scripts/global_localization_query.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/make_disabled_relocalization_attempts.py b/scripts/make_disabled_relocalization_attempts.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/make_localization_comparison_report.py b/scripts/make_localization_comparison_report.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/make_registration_relocalization_jobs.py b/scripts/make_registration_relocalization_jobs.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/make_relocalization_reset_commands.py b/scripts/make_relocalization_reset_commands.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/make_route_grid_relocalization_attempts.py b/scripts/make_route_grid_relocalization_attempts.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/observe_relocalization_reset_execution.py b/scripts/observe_relocalization_reset_execution.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/prepare_hdl_recovery_assets.sh b/scripts/prepare_hdl_recovery_assets.sh
+old mode 100755
+new mode 100644
+diff --git a/scripts/prepare_koide_hard_relocalization_assets.sh b/scripts/prepare_koide_hard_relocalization_assets.sh
+old mode 100755
+new mode 100644
+diff --git a/scripts/publish_cmd_vel_odom.py b/scripts/publish_cmd_vel_odom.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/publish_identity_odom.py b/scripts/publish_identity_odom.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/publish_odom_from_localization.py b/scripts/publish_odom_from_localization.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/publish_odom_from_twist.py b/scripts/publish_odom_from_twist.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/publish_pose_from_odom.py b/scripts/publish_pose_from_odom.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/publish_relocalization_reset_commands.py b/scripts/publish_relocalization_reset_commands.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/record_hdl_localization_outputs.py b/scripts/record_hdl_localization_outputs.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/reinitialization_supervisor_node.py b/scripts/reinitialization_supervisor_node.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/reinitialization_supervisor_policy.py b/scripts/reinitialization_supervisor_policy.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/relay_localization_inputs_with_current_stamp.py b/scripts/relay_localization_inputs_with_current_stamp.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/render_global_localization_demo_gif.py b/scripts/render_global_localization_demo_gif.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/republish_initialpose_on_reinit.py b/scripts/republish_initialpose_on_reinit.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/resolve_registration_relocalization_scans.py b/scripts/resolve_registration_relocalization_scans.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/run_autoware_istanbul_60s_predictor_compare.sh b/scripts/run_autoware_istanbul_60s_predictor_compare.sh
+old mode 100755
+new mode 100644
+diff --git a/scripts/run_borderline_gate_experiments.py b/scripts/run_borderline_gate_experiments.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/run_experiment_suite.py b/scripts/run_experiment_suite.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/run_hdl_g3_recovery_regression.sh b/scripts/run_hdl_g3_recovery_regression.sh
+old mode 100755
+new mode 100644
+diff --git a/scripts/run_hdl_g3_recovery_replay.sh b/scripts/run_hdl_g3_recovery_replay.sh
+old mode 100755
+new mode 100644
+diff --git a/scripts/run_hdl_localization_docker_benchmark.sh b/scripts/run_hdl_localization_docker_benchmark.sh
+old mode 100755
+new mode 100644
+diff --git a/scripts/run_imu_guard_experiments.py b/scripts/run_imu_guard_experiments.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/run_koide_g3_recovery_regression.sh b/scripts/run_koide_g3_recovery_regression.sh
+old mode 100755
+new mode 100644
+diff --git a/scripts/run_koide_g3_recovery_replay.sh b/scripts/run_koide_g3_recovery_replay.sh
+old mode 100755
+new mode 100644
+diff --git a/scripts/run_koide_hard_imu_deskew_smoke.sh b/scripts/run_koide_hard_imu_deskew_smoke.sh
+old mode 100755
+new mode 100644
+diff --git a/scripts/run_koide_phase1_backend_comparison.sh b/scripts/run_koide_phase1_backend_comparison.sh
+old mode 100755
+new mode 100644
+diff --git a/scripts/run_koide_phase1_regression.sh b/scripts/run_koide_phase1_regression.sh
+old mode 100755
+new mode 100644
+diff --git a/scripts/run_lidar_localization_imu_comparison.py b/scripts/run_lidar_localization_imu_comparison.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/run_measurement_acceptance_experiments.py b/scripts/run_measurement_acceptance_experiments.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/run_nav2_demo_smoke b/scripts/run_nav2_demo_smoke
+old mode 100755
+new mode 100644
+diff --git a/scripts/run_nav2_reinit_supervisor_regression.sh b/scripts/run_nav2_reinit_supervisor_regression.sh
+old mode 100755
+new mode 100644
+diff --git a/scripts/run_nav2_reinit_supervisor_sweep.sh b/scripts/run_nav2_reinit_supervisor_sweep.sh
+old mode 100755
+new mode 100644
+diff --git a/scripts/run_nav2_replay_smoke b/scripts/run_nav2_replay_smoke
+old mode 100755
+new mode 100644
+diff --git a/scripts/run_public_demo.sh b/scripts/run_public_demo.sh
+old mode 100755
+new mode 100644
+diff --git a/scripts/run_public_regression_suite.sh b/scripts/run_public_regression_suite.sh
+old mode 100755
+new mode 100644
+diff --git a/scripts/run_public_validation_dashboard.sh b/scripts/run_public_validation_dashboard.sh
+old mode 100755
+new mode 100644
+diff --git a/scripts/run_recovery_action_experiments.py b/scripts/run_recovery_action_experiments.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/run_registration_ordering_comparison.py b/scripts/run_registration_ordering_comparison.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/run_reinit_trigger_experiments.py b/scripts/run_reinit_trigger_experiments.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/run_release_regression_suite.sh b/scripts/run_release_regression_suite.sh
+old mode 100755
+new mode 100644
+diff --git a/scripts/run_v1_1_relocalization_smoke.sh b/scripts/run_v1_1_relocalization_smoke.sh
+old mode 100755
+new mode 100644
+diff --git a/scripts/scaffold_mapless_public_dataset_bundle.py b/scripts/scaffold_mapless_public_dataset_bundle.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/score_relocalization_candidates_with_reference.py b/scripts/score_relocalization_candidates_with_reference.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/select_relocalization_reset_candidates.py b/scripts/select_relocalization_reset_candidates.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/send_nav2_goal.py b/scripts/send_nav2_goal.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/setup_local_env.sh b/scripts/setup_local_env.sh
+old mode 100755
+new mode 100644
+diff --git a/scripts/summarize_localization_health.py b/scripts/summarize_localization_health.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/summarize_registration_relocalization_scores.py b/scripts/summarize_registration_relocalization_scores.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/summarize_relocalization_attempts.py b/scripts/summarize_relocalization_attempts.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/tum_trajectory_to_pose_reference_csv.py b/scripts/tum_trajectory_to_pose_reference_csv.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/tum_trajectory_to_pose_reference_csv_for_rosbag2.py b/scripts/tum_trajectory_to_pose_reference_csv_for_rosbag2.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/validate_lidar_localization_imu.py b/scripts/validate_lidar_localization_imu.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/validate_relocalization_reset_candidate_plan.py b/scripts/validate_relocalization_reset_candidate_plan.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/validate_relocalization_reset_commands.py b/scripts/validate_relocalization_reset_commands.py
+old mode 100755
+new mode 100644
+diff --git a/scripts/validate_v1_1_claim_language.py b/scripts/validate_v1_1_claim_language.py
+old mode 100755
+new mode 100644
+diff --git a/test/test_imu_runtime_validation_model.py b/test/test_imu_runtime_validation_model.py
+old mode 100755
+new mode 100644

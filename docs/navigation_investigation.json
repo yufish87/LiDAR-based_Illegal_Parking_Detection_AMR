@@ -1,0 +1,266 @@
+{
+  "date": "2026-09-23",
+  "scope": "Read-only source analysis and full local PGM/PCD parsing; no ROS, DDS, firmware or hardware execution. Historical root cause not proven.",
+  "upstream_comparison_commit": "0c9917ffc3cd53175a066b87659ea3920e3a4f20",
+  "upstream_is_confirmed_installed_version": false,
+  "method": {
+    "pgm": "Pillow grayscale array; extent = origin + pixel count * resolution; yaw=0 for both YAMLs. World origin pixel uses inverse row order.",
+    "pcd": "All ASCII XYZ rows parsed with numpy.loadtxt; finite points and row count compared with header; XY bounding-box containment is not geometric registration."
+  },
+  "map_statistics": {
+    "maps": [
+      {
+        "name": "mymap",
+        "width": 4406,
+        "height": 5642,
+        "resolution": 0.12,
+        "bounds": [
+          -339,
+          189.72000000000003,
+          -141,
+          536.04
+        ],
+        "pixel_at_world_origin": 255,
+        "trinary_class_counts": {
+          "occupied": 1035730,
+          "free": 23817339,
+          "unknown": 5583
+        }
+      },
+      {
+        "name": "my_map",
+        "width": 1323,
+        "height": 281,
+        "resolution": 0.07,
+        "bounds": [
+          -31.6,
+          61.01000000000001,
+          -10.2,
+          9.470000000000002
+        ],
+        "pixel_at_world_origin": 255,
+        "trinary_class_counts": {
+          "occupied": 20940,
+          "free": 347887,
+          "unknown": 2936
+        }
+      }
+    ],
+    "pcds": [
+      {
+        "path": "ros2_ws/cloudGlobal.pcd",
+        "points": 3752534,
+        "expected_points": 3752534,
+        "bounds_xyz": {
+          "x": [
+            -340.46478,
+            189.15001
+          ],
+          "y": [
+            -140.82368,
+            565.91077
+          ],
+          "z": [
+            -10.48924,
+            52.550598
+          ]
+        },
+        "inside_2d_maps": {
+          "mymap": 0.9999957362145153,
+          "my_map": 0.044119253816221254
+        },
+        "finite_points": 3752534
+      },
+      {
+        "path": "ros2_ws/final_map_V1_9_8_F_FLATTENED.pcd",
+        "points": 134167,
+        "expected_points": 134167,
+        "bounds_xyz": {
+          "x": [
+            -31.64937605909512,
+            61.904634891247454
+          ],
+          "y": [
+            -10.196411156189042,
+            9.588026546505926
+          ],
+          "z": [
+            -3.916051812028913,
+            11.140682336708355
+          ]
+        },
+        "inside_2d_maps": {
+          "mymap": 1.0,
+          "my_map": 0.999783851468692
+        },
+        "finite_points": 134167
+      }
+    ]
+  },
+  "source_files": [
+    {
+      "path": "ros2_ws/map.sh",
+      "sha256": "c4fe13999858a265bde63192840e77a71dbb59a22f5c3798fb156be2f893d2bc"
+    },
+    {
+      "path": "ros2_ws/nav1.sh",
+      "sha256": "1207cb7ec5d78a2c584de7b6c87ca6deb9b476bc45381aaf1e94f2c9fcb11761"
+    },
+    {
+      "path": "nav1.sh",
+      "sha256": "8f10fcea14e1052841e5581513d6921144b6cafe5389f7cc49dfd64fd1349261"
+    },
+    {
+      "path": "ros2_ws/my_nav2_params.yaml",
+      "sha256": "de6b81ec36a3ad3d7d725eb11f5c3f4c46cad01c70d78e06e3fdc289fa0d8ee5"
+    },
+    {
+      "path": "ros2_ws/local.sh",
+      "sha256": "53a30a3ea39db17a2d684fd2c15919a8da358f2d0c5451c21c7b223ce0e2862f"
+    },
+    {
+      "path": "ros2_ws/ini.sh",
+      "sha256": "2914baeb0d239231a76c84efeb94614ed2a466196e2074b870d3b2685bfeecf7"
+    },
+    {
+      "path": "ros2_ws/myagv.sh",
+      "sha256": "bff27bb8c6e06dde0186365d805bb18c84b6d3a76db2b02d674b7197703d8d0b"
+    },
+    {
+      "path": "ros2_ws/myagv.urdf",
+      "sha256": "eb205275898744b2b6736e5716661ac1208192fd57563b0c1548a5fef81e13b0"
+    },
+    {
+      "path": "myagv.urdf",
+      "sha256": "cf56f50b1d5d4938807c68182692eb4645005efac857e8ef90bbdb49502acb42"
+    },
+    {
+      "path": "ros2_ws/odem_bridge.py",
+      "sha256": "7ec022fd1fd0ed7c0e5f5d24a9aca896bfefa926665ea927767ad4517eb87573"
+    },
+    {
+      "path": "ros2_ws/mymap.yaml",
+      "sha256": "0b9e58e429dd70cb5a08da2c9672e777a9bab255ce9595611ad299168e3fd16c"
+    },
+    {
+      "path": "ros2_ws/my_map.yaml",
+      "sha256": "4433b3835502770318f2154058606e6c860ae68cfc0ae011a3b4706030a8975f"
+    },
+    {
+      "path": "ros2_ws/mymap.pgm",
+      "sha256": "c9b41289550a54b643ced6ef2bacb29c4ef71cb1b94f5faea8e230099b3527c2"
+    },
+    {
+      "path": "ros2_ws/my_map.pgm",
+      "sha256": "35172f27afb0140fedbf413c6e9839f9b41bc4f7d08a415ef8b87e50a9206ef6"
+    },
+    {
+      "path": "ros2_ws/cloudGlobal.pcd",
+      "sha256": "a5ae809966e663f083f9bea3ae45a647d0ea7cd15ec759c82d5edc07abc34b30"
+    },
+    {
+      "path": "ros2_ws/final_map_V1_9_8_F_FLATTENED.pcd",
+      "sha256": "64a987d2bd53b050dd1b54252326a537b44b0072394aecabca3bea594424bd1c"
+    },
+    {
+      "path": "fish/ros2_ws/violation_area/zones.yaml",
+      "sha256": "c16a649791b4a835f5fb0e2a50e361d04c5709ad5f26019ef1889281a8528b3e"
+    },
+    {
+      "path": "ros2_ws/install/lidar_localization_ros2/share/lidar_localization_ros2/launch/nav2_lidar_localization.launch.py",
+      "sha256": "37ba3b4d0f06b2b7ef2fd0a392348dca2b6c4d83031813db116066aaa10d29d0"
+    },
+    {
+      "path": "ros2_ws/install/lidar_localization_ros2/share/lidar_localization_ros2/param/nav2_ndt_urban.yaml",
+      "sha256": "f03608e8fcd371299b60303fc0ffb278ad147eff5a8fc0ebcfc9a5062184c4df"
+    },
+    {
+      "path": "fish/ros2_ws/run.md",
+      "sha256": "62cad40abdc150575fbcb798c79e48560eeb33616950f82543b99ff38199815c"
+    }
+  ],
+  "upstream_sources": [
+    {
+      "url": "https://github.com/ros-navigation/navigation2/blob/0c9917ffc3cd53175a066b87659ea3920e3a4f20/nav2_bringup/bringup/launch/navigation_launch.py",
+      "sha256": "273c1bdcd4b969aa76c8e96a722395b6e8a5a598c4da9adefc7f8f381f4839d8"
+    },
+    {
+      "url": "https://github.com/ros-navigation/navigation2/blob/0c9917ffc3cd53175a066b87659ea3920e3a4f20/nav2_common/nav2_common/launch/rewritten_yaml.py",
+      "sha256": "4cfd8d9c2858ec1f58a4b42c25089ca8880c5af1c3bcff46178e8a795244bb05"
+    },
+    {
+      "url": "https://github.com/ros-navigation/navigation2/blob/0c9917ffc3cd53175a066b87659ea3920e3a4f20/nav2_map_server/src/map_server/map_server.cpp",
+      "sha256": "f4622bd464f03415a897b06b7333e906bc1fdce855b17c03130adbc5c76eb9a3"
+    },
+    {
+      "url": "https://github.com/ros-navigation/navigation2/blob/0c9917ffc3cd53175a066b87659ea3920e3a4f20/nav2_costmap_2d/plugins/static_layer.cpp",
+      "sha256": "42dbbd98649022fae791292a25c5ce874623888ad88153d84efd1525de64d8e9"
+    },
+    {
+      "url": "https://github.com/ros-navigation/navigation2/blob/0c9917ffc3cd53175a066b87659ea3920e3a4f20/nav2_costmap_2d/src/costmap_2d_ros.cpp",
+      "sha256": "61f66f3470edb9bf96e9d05a0722f562b993d22cf160e519e84dc873063a1fea"
+    },
+    {
+      "url": "https://github.com/ros-navigation/navigation2/blob/0c9917ffc3cd53175a066b87659ea3920e3a4f20/nav2_controller/src/nav2_controller.cpp",
+      "sha256": "069b04585fd5ac9c9f02d1cfbe8179491e26759b73000b106e34766ce9ccf3c5"
+    },
+    {
+      "url": "https://github.com/ros-navigation/navigation2/blob/0c9917ffc3cd53175a066b87659ea3920e3a4f20/nav2_regulated_pure_pursuit_controller/nav2_regulated_pure_pursuit_controller.xml",
+      "sha256": "6d903da447c019f3edee595cef9d9cdb6d6d1c331ef01e5765ecdb88d7b1709b"
+    }
+  ],
+  "findings": {
+    "navigation_map_argument_used_by_official_foxy_launch": false,
+    "official_foxy_launch_default_map_subscribe_transient_local": false,
+    "saved_yaml_static_layer_map_subscribe_transient_local": true,
+    "nav1_overrides_map_subscription_launch_argument": false,
+    "candidate_late_joiner_map_loss_requires_historical_version_and_order_confirmation": true,
+    "main_backup_map_and_pcd_are_large_map_candidates": true,
+    "exact_ouster_sensor_launch_xml_found_in_backup_search": false,
+    "historical_outdoor_runtime_failure_log_identified": false,
+    "user_confirmed_two_map_filenames_are_different_locations": true,
+    "exact_filename_to_indoor_outdoor_assignment_explicitly_confirmed": false,
+    "late_joiner_qos_hypothesis_priority": "conditional_alternative_not_primary",
+    "reason_for_priority_revision": "run.md lists Nav2 before GUI before map.sh; a subscriber established before the later map publication can receive it with volatile durability. No evidence of subscription delay or restart in the failing run."
+  },
+  "runtime_sources_modified": false,
+  "isolated_source_probe": {
+    "method": "AST extract the two original RewrittenYaml helper classes, omit ROS base class/imports, call original substitute_params on a representative static-layer mapping. This is not a ROS/DDS execution.",
+    "input_map_subscribe_transient_local": true,
+    "launch_default_string": "false",
+    "rewritten_value": false,
+    "declared_official_navigation_launch_arguments": [
+      "namespace",
+      "use_sim_time",
+      "autostart",
+      "params_file",
+      "default_bt_xml_filename",
+      "map_subscribe_transient_local"
+    ],
+    "passed": true
+  },
+  "startup_order_record": {
+    "source": "fish/ros2_ws/run.md",
+    "copied_path": "fish/ros2_ws/run.md",
+    "original_and_copy_hash_match": true,
+    "order": [
+      "fix.sh / odem_bridge.py",
+      "myagv.sh",
+      "ous/lidar.sh",
+      "laser.sh",
+      "local.sh",
+      "nav1.sh",
+      "nav_gui.py",
+      "map.sh",
+      "vehicle detector",
+      "violation detector",
+      "camera uploader"
+    ],
+    "nav1_line": 15,
+    "nav_gui_line": 17,
+    "map_line": 19,
+    "recorded_nav_before_map": true,
+    "runtime_readiness_times_available": false,
+    "interpretation": "Operation notes contain persistent foreground processes and relative paths; not a single-terminal executable script or a timestamped runtime log."
+  }
+}

@@ -1,0 +1,39 @@
+# ROS / native build outputs
+**/build/
+**/build_ws/build/
+**/install/
+**/log/
+**/local_prefix/
+**/__pycache__/
+*.py[cod]
+*.so
+*.o
+*.a
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+
+# Local settings and recordings
+.env
+.env.*
+!.env.example
+*.bag
+*.db3
+*.mcap
+*.swp
+*.swo
+*.save
+*.save.*
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+environment.txt
+environment.local.*
+artifacts/
+tmp/
+data/recordings/
+
+# Maps, weights, STL and reports are intentionally NOT ignored.
+# They are already included locally; use .gitattributes / Git LFS before git add.
